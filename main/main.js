@@ -10,12 +10,18 @@ function requestListener(request, response) {
     response.end();
 };
 
+const serverPort = 9000;
+const server = createServer(requestListener);
+
 function start() {
-    const serverPort = 9000;
-
-    createServer(requestListener).listen(serverPort);
-
+    server.listen(serverPort);
     console.log("Server running at port %s", serverPort);
 }
 
+function stop() {
+    server.close();
+}
+
 start();
+
+export { start, stop };
