@@ -1,4 +1,6 @@
 import { createServer } from "http";
+import { routing } from "./routing";
+import * as url from "url";
 
 const defaultHeaders = {
    "Content-type": "application/json; charser=utf-8"
@@ -12,9 +14,16 @@ class Server {
     }
 
     requestListener(request, response) {
-        response.writeHead(200, defaultHeaders);
-        response.write(JSON.stringify({status:"ok"}));
-        response.end();
+        const requestData = url.parse(request.url);
+        const route = routing.get(requestData.pathname, request.method);
+        if (route) {
+            response.writeHead(200, defaultHeaders);
+            response.write(JSON.stringify(route.func()));
+            response.end();
+        } else {
+            response.writeHead(404, defaultHeaders);
+            response.end();
+        }
     }
 
     start() {
@@ -23,6 +32,7 @@ class Server {
     }
 
     stop() {
+        console.log("Shutting down server.");
         this.server.close();
     }
 

@@ -8,8 +8,8 @@ class Routing {
         this.routes.push(route);
     }
 
-    get(path) {
-        return this.routes.find(r => r.path === path);
+    get(path, method) {
+        return this.routes.find(r => r.path === path && r.method === method);
     }
 
 }
