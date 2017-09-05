@@ -1,0 +1,29 @@
+{
+  "name": "atm-api",
+  "version": "1.0.0",
+  "description": "ATM API server",
+  "author": "Jose Antonio Rosa dos Santos Junior",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/djoca/atm-api.git"
+  },
+  "bugs": {
+    "url": "https://github.com/djoca/atm-api/issues"
+  },
+  "homepage": "https://github.com/djoca/atm-api#readme",
+  "main": "main/main.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "mocha": "^3.5.0"
+  },
+  "scripts": {
+    "test": "mocha",
+    "start": "babel-node main/main.js --presets es2015"
+  }
+}
