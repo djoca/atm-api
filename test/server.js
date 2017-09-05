@@ -1,4 +1,4 @@
-import * as server from "../main/main";
+import { server } from "../main/main";
 import { get } from "http";
 
 describe("server", () => {
