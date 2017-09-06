@@ -11,7 +11,7 @@ class Routing {
     get(path, method) {
         const route = this.routes.find(r => this._match(r.path,path) && r.method === method);
         if (route) {
-            route.parameters = this._parameters(route, path);
+            route.parameters = this._variables(route, path);
         }
         return route;
     }
@@ -42,18 +42,18 @@ class Routing {
         return true;
     }
 
-    _parameters(route, path) {
+    _variables(route, path) {
         const pathArray = path.split("/");
         const routePathArray = route.path.split("/");
-        const params = {};
+        const variables = {};
 
         for (let i = 0; i < routePathArray.length; i++) {
             if (routePathArray[i].startsWith(":")) {
-                params[routePathArray[i].substring(1)] = pathArray[i];
+                variables[routePathArray[i].substring(1)] = pathArray[i];
             }
         }
 
-        return params;
+        return variables;
     }
 
 }
