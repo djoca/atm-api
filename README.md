@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/djoca/atm-api.svg?branch=master)](https://travis-ci.org/djoca/atm-api)
+
 ## ATM API
 
 This is a very simple ATM API server made with Node.js. 
