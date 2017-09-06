@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/djoca/atm-api.svg?branch=master)](https://travis-ci.org/djoca/atm-api)
+[![Coverage Status](https://coveralls.io/repos/github/djoca/atm-api/badge.svg?branch=master)](https://coveralls.io/github/djoca/atm-api?branch=master)
 
 ## ATM API
 
