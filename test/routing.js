@@ -19,13 +19,15 @@ describe("routing", () => {
     });
 
     it("should register another route", (done) => {
+        const numRoutes = routing.routes.length;
+
         routing.register({
             path: "/test",
             method: "GET",
             func: f
         });
 
-        assert.equal(routing.routes.length, 2);
+        assert.equal(routing.routes.length, numRoutes + 1);
 
         done();
     });
@@ -35,13 +37,15 @@ describe("routing", () => {
             return {status: "posted"};
         }
 
+        const numRoutes = routing.routes.length;
+
         routing.register({
             path: "/test",
             method: "POST",
             func: p
         });
 
-        assert.equal(routing.routes.length, 3);
+        assert.equal(routing.routes.length, numRoutes + 1);
 
         const route = routing.get("/test", "POST");
         assert.equal(route.path, "/test");
@@ -99,4 +103,32 @@ describe("routing", () => {
         })
     });
 
+    it("should find routing with parameter", (done) => {
+        routing.register({
+            path: "/book/:id",
+            method: "DELETE"
+        });
+
+        const route = routing.get("/book/10", "DELETE");
+
+        assert.ok(route);
+
+        done();
+    });
+
+    it("should extract params from path", (done) => {
+        routing.register({
+            path: "/book/:id/chapter/:chapterNumber",
+            method: "PUT"
+        });
+
+        const route = routing.get("/book/10/chapter/3", "PUT");
+
+        console.log(route.parameters);
+
+        assert.equal(route.parameters.id, 10);
+        assert.equal(route.parameters.chapterNumber, 3);
+
+        done();
+    });
 });

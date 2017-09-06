@@ -1,6 +1,7 @@
 import { createServer } from "http";
 import { routing } from "./routing";
 import * as url from "url";
+import * as controller from "./controller";
 
 const defaultHeaders = {
    "Content-type": "application/json; charser=utf-8"
@@ -15,10 +16,18 @@ class Server {
 
     requestListener(request, response) {
         const requestData = url.parse(request.url);
+
         const route = routing.get(requestData.pathname, request.method);
+
         if (route) {
             response.writeHead(200, defaultHeaders);
-            response.write(JSON.stringify(route.func()));
+
+            // FIXME Use callback function
+            const result = route.func(request, response);
+            if (result) {
+                response.write(JSON.stringify(result));
+            }
+
             response.end();
         } else {
             response.writeHead(404, defaultHeaders);

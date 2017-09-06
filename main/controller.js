@@ -1,11 +1,10 @@
 import { routing } from "./routing";
 
 function deposit(request, response) {
-
 }
 
 routing.register({
-    path: "/deposit",
+    path: "/account/:id",
     method: "POST",
     func: deposit
 });
