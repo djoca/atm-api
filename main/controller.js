@@ -1,5 +1,6 @@
 import { routing } from "./routing";
-import * as service from "./accountService";
+import * as accountService from "./accountService";
+import * as atmService from "./atmService";
 import { AccountNotFoundError } from "./exception";
 
 function deposit(request, response, route) {
@@ -14,7 +15,7 @@ function deposit(request, response, route) {
 
         const accountId = parseInt(route.parameters.id);
 
-        service.deposit(accountId, bills, (account, err) => {
+        accountService.deposit(accountId, bills, (account, err) => {
             if (err) {
                 response.statusCode = err.code;
                 response.write(JSON.stringify({
@@ -42,20 +43,42 @@ function withdraw(request, response, route) {
 
         const accountId = parseInt(route.parameters.id);
 
-        service.withdraw(accountId, data.amount, (account, err) => {
+        let result = {};
+
+        accountService.withdraw(accountId, data.amount, (account, err) => {
             if (err) {
-                response.statusCode = err.code;
-                response.write(JSON.stringify({
-                    exception: err.message
-                }));
-                response.end();
-            } else {
-                response.statusCode = 200;
-                response.write(JSON.stringify(account));
-                response.end();
+                errorResponse(err, response);
+                return;
             }
+
+            atmService.withdraw(data.amount, (bills, err) => {
+                if (err) {
+                    errorResponse(err, response);
+                    return;
+                }
+
+                response.statusCode = 200;
+
+                result.account = account;
+                result.bills = bills;
+
+                response.write(JSON.stringify(result));
+                response.end();
+            });
         });
     });
+}
+
+function errorResponse(err, response) {
+    if (err.code) {
+        response.statusCode = err.code;
+        response.write(JSON.stringify({
+            exception: err.message
+        }));
+        response.end();
+    } else {
+        console.log(err);
+    }
 }
 
 routing.register({

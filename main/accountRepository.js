@@ -4,6 +4,7 @@ const savedAccounts = new Map();
 
 save(new Account(1001));
 save(new Account(1002, 100));
+save(new Account(1003, 1000));
 
 function get(id) {
     return savedAccounts.get(id);

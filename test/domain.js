@@ -4,7 +4,7 @@ import { server } from "../main/server";
 
 import * as http from "http";
 
-describe("deposit", () => {
+describe("atm", () => {
 
     before(() => {
         server.start();
@@ -110,9 +110,12 @@ describe("deposit", () => {
             });
 
             response.on("end", () => {
-                const account = JSON.parse(data);
+                const result = JSON.parse(data);
 
-                assert.equal(account.balance, 30);
+                assert.equal(result.account.balance, 30);
+                assert.equal(result.bills.fifty_brl_bill, 1);
+                assert.equal(result.bills.twenty_brl_bill, 1);
+                assert.ok(!result.bills.ten_brl_bill);
                 done();
             });
         });
@@ -126,7 +129,7 @@ describe("deposit", () => {
         req.end();
     });
 
-    it ("should should not withdraw from account with insufficient balance", (done) => {
+    it ("should not withdraw from account with insufficient balance", (done) => {
        const options = {
             hostname: "localhost",
             port: 9000,
@@ -157,7 +160,7 @@ describe("deposit", () => {
         req.end();
     });
 
-    it ("should should not withdraw from account with invalid amount", (done) => {
+    it ("should not withdraw from account with invalid amount", (done) => {
        const options = {
             hostname: "localhost",
             port: 9000,
@@ -245,6 +248,38 @@ describe("deposit", () => {
 
         const data = {
             amount: 70
+        };
+
+        req.write(JSON.stringify(data));
+
+        req.end();
+    });
+
+
+    it ("should not withdraw from account with insufficient amount of bills inside ATM", (done) => {
+       const options = {
+            hostname: "localhost",
+            port: 9000,
+            method: "POST",
+            path: "/account/1003/withdrawal"
+        };
+
+        const req = http.request(options, (response) => {
+            let data = "";
+
+            assert.equal(response.statusCode, 503);
+
+            response.on("data", (chunk) => {
+                data += chunk;
+            });
+
+            response.on("end", () => {
+                done();
+            });
+        });
+
+        const data = {
+            amount: 500
         };
 
         req.write(JSON.stringify(data));

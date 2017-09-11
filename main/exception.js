@@ -22,4 +22,12 @@ class InvalidAmountError extends Error {
     }
 }
 
-export { AccountNotFoundError, InsuficientBalanceError, InvalidAmountError };
+class NotEnoughBillsAvailable extends Error {
+    constructor(message) {
+        super(message || "There is not enough bills available in this ATM.");
+        Error.captureStackTrace(this, InsuficientBalanceError);
+        this.code = 503;
+    }
+}
+
+export { AccountNotFoundError, InsuficientBalanceError, InvalidAmountError, NotEnoughBillsAvailable };
