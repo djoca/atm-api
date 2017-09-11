@@ -19,7 +19,7 @@ function deposit(accountId, bills, callback) {
 
     const account = repository.get(accountId);
 
-    account.balance += value;
+    account.deposit(value);
 
     repository.save(account);
 
