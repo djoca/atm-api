@@ -1,4 +1,4 @@
-import { server } from "../main/main";
+import { server } from "../main/server";
 import { get } from "http";
 import * as assert from "assert";
 

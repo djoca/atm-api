@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import { routing } from "../main/routing";
 import * as http from "http";
-import { server } from "../main/main";
+import { server } from "../main/server";
 
 describe("routing", () => {
 
