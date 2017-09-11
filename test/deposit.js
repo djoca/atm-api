@@ -1,7 +1,6 @@
 import * as assert from "assert";
 import { routing } from "../main/routing";
 import { server } from "../main/server";
-import * as httpMocks from "node-mocks-http";
 
 import * as http from "http";
 
