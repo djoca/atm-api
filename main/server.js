@@ -22,13 +22,7 @@ class Server {
         if (route) {
             response.writeHead(200, defaultHeaders);
 
-            // FIXME Use callback function
-            const result = route.func(request, response);
-            if (result) {
-                response.write(JSON.stringify(result));
-            }
-
-            response.end();
+            route.func(request, response, route);
         } else {
             response.writeHead(404, defaultHeaders);
             response.end();

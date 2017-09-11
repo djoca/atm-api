@@ -69,13 +69,28 @@ describe("routing", () => {
     });
 
     it("should be called by the http server", (done) => {
+        const anotherTest = function(request, response) {
+            const result = {status: "posted"};
+
+            response.write(JSON.stringify(result));
+            response.end();
+        }
+
+        const numRoutes = routing.routes.length;
+
+        routing.register({
+            path: "/another-test",
+            method: "POST",
+            func: anotherTest
+        });
+
         server.start();
 
         const req = http.request({
             hostname: "localhost",
             port: 9000,
             method: "POST",
-            path: "/test"
+            path: "/another-test"
         }, (response) => {
             let data = "";
 
