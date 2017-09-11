@@ -1,4 +1,5 @@
 import * as repository from "./accountRepository";
+import { AccountNotFoundError } from "./exception";
 
 const bill_values = {
     "one_brl_bill": 1,
@@ -17,13 +18,42 @@ function deposit(accountId, bills, callback) {
         value += bills[bill_type] ? bills[bill_type] * bill_values[bill_type] : 0;
     }
 
-    const account = repository.get(accountId);
+    try {
+        const account = getAccount(accountId);
 
-    account.deposit(value);
+        account.deposit(value);
 
-    repository.save(account);
+        repository.save(account);
 
-    callback(account);
+        callback(account);
+    } catch (err) {
+        callback(null, err);
+    }
+
 }
 
-export { deposit };
+function withdraw(accountId, amount, callback) {
+    try {
+        const account = getAccount(accountId);
+
+        account.withdraw(amount);
+
+        repository.save(account);
+
+        callback(account);
+    } catch (err) {
+        callback(null, err);
+    }
+}
+
+function getAccount(accountId) {
+    const account = repository.get(accountId);
+
+    if (!account) {
+        throw new AccountNotFoundError();
+    }
+
+    return account;
+}
+
+export { deposit, withdraw };

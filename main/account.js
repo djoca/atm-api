@@ -1,6 +1,8 @@
+import { InsuficientBalanceError, InvalidAmountError } from "./exception";
+
 function validateAmount(amount) {
-    if (amount < 0) {
-        throw new Exception("Invalid amount: %s", amount);
+    if (!(parseInt(amount) >= 0)) {
+        throw new InvalidAmountError("Invalid amount: %s", amount);
     }
 }
 
@@ -24,7 +26,7 @@ class Account {
         validateAmount(amount);
 
         if (this._balance - amount < 0) {
-            throw new Exception("Insuficient balance");
+            throw new InsuficientBalanceError();
         }
 
         this._balance -= amount;

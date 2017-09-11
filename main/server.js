@@ -19,12 +19,12 @@ class Server {
 
         const route = routing.get(requestData.pathname, request.method);
 
+        response.setHeader("Content-type", "application/json; charser=utf-8");
         if (route) {
-            response.writeHead(200, defaultHeaders);
-
+            response.statusCode = 200;
             route.func(request, response, route);
         } else {
-            response.writeHead(404, defaultHeaders);
+            response.statusCode = 404;
             response.end();
         }
     }

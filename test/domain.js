@@ -15,7 +15,7 @@ describe("deposit", () => {
     })
 
     it("should have end point", (done) => {
-        const route = routing.get("/account/:id", "PUT");
+        const route = routing.get("/account/:id/deposit", "POST");
         assert.ok(route);
         done();
     });
@@ -25,8 +25,8 @@ describe("deposit", () => {
         const options = {
             hostname: "localhost",
             port: 9000,
-            method: "PUT",
-            path: "/account/1001"
+            method: "POST",
+            path: "/account/1001/deposit"
         };
 
         const req = http.request(options, (response) => {
@@ -60,8 +60,8 @@ describe("deposit", () => {
         const options = {
             hostname: "localhost",
             port: 9000,
-            method: "PUT",
-            path: "/account/1001"
+            method: "POST",
+            path: "/account/1001/deposit"
         };
 
         const req = http.request(options, (response) => {
@@ -92,4 +92,163 @@ describe("deposit", () => {
         req.end();
     });
 
+    it ("should withdraw 70 BRL from account with sufficient balance", (done) => {
+       const options = {
+            hostname: "localhost",
+            port: 9000,
+            method: "POST",
+            path: "/account/1002/withdrawal"
+        };
+
+        const req = http.request(options, (response) => {
+            let data = "";
+
+            assert.equal(response.statusCode, 200);
+
+            response.on("data", (chunk) => {
+                data += chunk;
+            });
+
+            response.on("end", () => {
+                const account = JSON.parse(data);
+
+                assert.equal(account.balance, 30);
+                done();
+            });
+        });
+
+        const data = {
+            amount: 70
+        };
+
+        req.write(JSON.stringify(data));
+
+        req.end();
+    });
+
+    it ("should should not withdraw from account with insufficient balance", (done) => {
+       const options = {
+            hostname: "localhost",
+            port: 9000,
+            method: "POST",
+            path: "/account/1002/withdrawal"
+        };
+
+        const req = http.request(options, (response) => {
+            let data = "";
+
+            assert.equal(response.statusCode, 400);
+
+            response.on("data", (chunk) => {
+                data += chunk;
+            });
+
+            response.on("end", () => {
+                done();
+            });
+        });
+
+        const data = {
+            amount: 70
+        };
+
+        req.write(JSON.stringify(data));
+
+        req.end();
+    });
+
+    it ("should should not withdraw from account with invalid amount", (done) => {
+       const options = {
+            hostname: "localhost",
+            port: 9000,
+            method: "POST",
+            path: "/account/1002/withdrawal"
+        };
+
+        const req = http.request(options, (response) => {
+            let data = "";
+
+            assert.equal(response.statusCode, 400);
+
+            response.on("data", (chunk) => {
+                data += chunk;
+            });
+
+            response.on("end", () => {
+                done();
+            });
+        });
+
+        const data = {
+            amount: "Not a number"
+        };
+
+        req.write(JSON.stringify(data));
+
+        req.end();
+    });
+
+    it ("should return 404 for nonexistent account when depositing", (done) => {
+       const options = {
+            hostname: "localhost",
+            port: 9000,
+            method: "POST",
+            path: "/account/1425/deposit"
+        };
+
+        const req = http.request(options, (response) => {
+            let data = "";
+
+            assert.equal(response.statusCode, 404);
+
+            response.on("data", (chunk) => {
+                data += chunk;
+            });
+
+            response.on("end", () => {
+                done();
+            });
+        });
+
+        const data = {
+            fifty_brl_bill: 1,
+            ten_brl_bill: 2,
+            two_brl_bill: 3
+        };
+
+        req.write(JSON.stringify(data));
+
+        req.end();
+    });
+
+    it ("should return 404 for nonexistent account when withdrawing", (done) => {
+       const options = {
+            hostname: "localhost",
+            port: 9000,
+            method: "POST",
+            path: "/account/1425/withdrawal"
+        };
+
+        const req = http.request(options, (response) => {
+            let data = "";
+
+            assert.equal(response.statusCode, 404);
+
+            response.on("data", (chunk) => {
+                data += chunk;
+            });
+
+            response.on("end", () => {
+                done();
+            });
+        });
+
+        const data = {
+            amount: 70
+        };
+
+        req.write(JSON.stringify(data));
+
+        req.end();
+    });
 });
