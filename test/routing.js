@@ -139,8 +139,6 @@ describe("routing", () => {
 
         const route = routing.get("/book/10/chapter/3", "PUT");
 
-        console.log(route.parameters);
-
         assert.equal(route.parameters.id, 10);
         assert.equal(route.parameters.chapterNumber, 3);
 
