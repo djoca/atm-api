@@ -15,7 +15,7 @@ describe("deposit", () => {
     })
 
     it("should have end point", (done) => {
-        const route = routing.get("/account/:id", "POST");
+        const route = routing.get("/account/:id", "PUT");
         assert.ok(route);
         done();
     });
@@ -25,7 +25,7 @@ describe("deposit", () => {
         const options = {
             hostname: "localhost",
             port: 9000,
-            method: "POST",
+            method: "PUT",
             path: "/account/1001"
         };
 
@@ -60,7 +60,7 @@ describe("deposit", () => {
         const options = {
             hostname: "localhost",
             port: 9000,
-            method: "POST",
+            method: "PUT",
             path: "/account/1001"
         };
 

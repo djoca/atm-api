@@ -22,6 +22,6 @@ function deposit(request, response, route) {
 
 routing.register({
     path: "/account/:id",
-    method: "POST",
+    method: "PUT",
     func: deposit
 });
