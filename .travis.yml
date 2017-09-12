@@ -4,3 +4,7 @@ node_js:
 after_script:
   - npm run coverage
   - npm run report-coverage
+services:
+  - mongodb
+before_script:
+  - sleep 15 
