@@ -23,5 +23,5 @@ Run the tests with command bellow:
 
 ## Mongo DB
 
-    This project uses MongoDB. By default, the ATM API will connect to an instance in the same machine. You can change the database settings in the main/mongodb.js file.
+This project uses MongoDB. By default, the ATM API will connect to an instance in the same machine. You can change the database settings in the main/mongodb.js file.
 
