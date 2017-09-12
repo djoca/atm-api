@@ -45,25 +45,33 @@ function withdraw(request, response, route) {
 
         let result = {};
 
-        accountService.withdraw(accountId, data.amount, (account, err) => {
+        accountService.canWithdraw(accountId, data.amount, (err) => {
             if (err) {
                 errorResponse(err, response);
                 return;
             }
 
-            atmService.withdraw(data.amount, (bills, err) => {
+            accountService.withdraw(accountId, data.amount, (account, err) => {
                 if (err) {
                     errorResponse(err, response);
                     return;
                 }
 
-                response.statusCode = 200;
+                atmService.withdraw(data.amount, (bills, err) => {
+                    if (err) {
+                        accountService.reversal(accountId, data.amount);
+                        errorResponse(err, response);
+                        return;
+                    }
 
-                result.account = account;
-                result.bills = bills;
+                    response.statusCode = 200;
 
-                response.write(JSON.stringify(result));
-                response.end();
+                    result.account = account;
+                    result.bills = bills;
+
+                    response.write(JSON.stringify(result));
+                    response.end();
+                });
             });
         });
     });

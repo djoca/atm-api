@@ -1,5 +1,5 @@
 import * as repository from "./accountRepository";
-import { AccountNotFoundError } from "./exception";
+import { AccountNotFoundError, InsuficientBalanceError } from "./exception";
 
 const bill_values = {
     "one_brl_bill": 1,
@@ -29,7 +29,28 @@ function deposit(accountId, bills, callback) {
     } catch (err) {
         callback(null, err);
     }
+}
 
+function reversal(accountId, amount) {
+    const account = getAccount(accountId);
+
+    account.deposit(amount);
+
+    repository.save(account);
+}
+
+function canWithdraw(accountId, amount, callback) {
+    try {
+        const account = getAccount(accountId);
+
+        if (amount > account.balance) {
+            throw new InsuficientBalanceError();
+        }
+
+        callback();
+    } catch (err) {
+        callback(err);
+    }
 }
 
 function withdraw(accountId, amount, callback) {
@@ -56,4 +77,4 @@ function getAccount(accountId) {
     return account;
 }
 
-export { deposit, withdraw };
+export { deposit, withdraw, canWithdraw, reversal };
