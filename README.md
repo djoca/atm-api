@@ -20,3 +20,8 @@ Then, run the server:
 Run the tests with command bellow:
 
     npm test
+
+## Mongo DB
+
+    This project uses MongoDB. By default, the ATM API will connect to an instance in the same machine. You can change the database settings in the main/mongodb.js file.
+
