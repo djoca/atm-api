@@ -10,7 +10,7 @@ class InsuficientBalanceError extends Error {
     constructor(message) {
         super(message || "Insuficient balance");
         Error.captureStackTrace(this, InsuficientBalanceError);
-        this.code = 400;
+        this.code = 403;
     }
 }
 

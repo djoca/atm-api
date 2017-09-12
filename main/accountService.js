@@ -3,71 +3,79 @@ import * as atmService from "./atmService";
 import { AccountNotFoundError, InsuficientBalanceError } from "./exception";
 
 function deposit(accountId, bills, callback) {
-    try {
-        const account = getAccount(accountId);
+    getAccount(accountId, (account, err) => {
 
-        atmService.deposit(bills);
+        if (err) {
+            callback(null, err);
+            return;
+        }
 
-        let value = 0;
+        atmService.deposit(bills, () => {
+            let value = 0;
 
-        bills.forEach((bill) => {
-            value += bill.value * bill.quantity;
+            bills.forEach((bill) => {
+                value += bill.value * bill.quantity;
+            });
+
+            account.deposit(value);
+
+            repository.save(account, () => {
+                callback(account, err);
+            });
+
         });
-
-        account.deposit(value);
-
-        repository.save(account);
-
-        callback(account);
-    } catch (err) {
-        callback(null, err);
-    }
+    });
 }
 
 function reversal(accountId, amount) {
-    const account = getAccount(accountId);
+    getAccount(accountId, (account, err) => {
 
-    account.deposit(amount);
+        account.deposit(amount);
 
-    repository.save(account);
+        repository.save(account, () => {});
+    });
 }
 
 function canWithdraw(accountId, amount, callback) {
-    try {
-        const account = getAccount(accountId);
+    getAccount(accountId, (account, err) => {
 
-        if (amount > account.balance) {
-            throw new InsuficientBalanceError();
+        if (err) {
+            callback(err);
+            return;
         }
 
-        callback();
-    } catch (err) {
-        callback(err);
-    }
+        if (amount > account.balance) {
+            callback(new InsuficientBalanceError());
+        } else {
+            callback();
+        }
+
+    });
 }
 
 function withdraw(accountId, amount, callback) {
-    try {
-        const account = getAccount(accountId);
+    getAccount(accountId, (account, err) => {
+        try {
+            account.withdraw(amount);
 
-        account.withdraw(amount);
+            repository.save(account, () => {
+                callback(account, err);
+            });
 
-        repository.save(account);
-
-        callback(account);
-    } catch (err) {
-        callback(null, err);
-    }
+        } catch (err) {
+            callback(null, err);
+        }
+    });
 }
 
-function getAccount(accountId) {
-    const account = repository.get(accountId);
-
-    if (!account) {
-        throw new AccountNotFoundError();
-    }
-
-    return account;
+function getAccount(accountId, callback) {
+    repository.get(accountId, (account, err) => {
+        if (!account) {
+            callback(null, new AccountNotFoundError());
+        } else {
+            callback(account);
+        }
+    });
 }
 
 export { deposit, withdraw, canWithdraw, reversal };

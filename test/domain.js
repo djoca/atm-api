@@ -140,7 +140,7 @@ describe("atm", () => {
         const req = http.request(options, (response) => {
             let data = "";
 
-            assert.equal(response.statusCode, 400);
+            assert.equal(response.statusCode, 403);
 
             response.on("data", (chunk) => {
                 data += chunk;

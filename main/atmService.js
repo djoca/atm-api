@@ -48,9 +48,11 @@ function withdraw(amount, callback) {
                 throw new NotEnoughBillsAvailable();
             }
 
-            repository.saveBills(storedBills);
+            repository.saveBills(storedBills, () => {
+                callback(bills);
+            });
 
-            callback(bills);
+            // callback(bills);
         } catch (err) {
             callback(null, err);
         }
@@ -65,7 +67,9 @@ function deposit(bills, callback) {
                 .map((b) => b.quantity += bill.quantity);
         });
 
-        repository.saveBills(storedBills);
+        repository.saveBills(storedBills, () => {
+            callback();
+        });
     });
 }
 

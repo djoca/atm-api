@@ -50,7 +50,6 @@ function withdraw(request, response, route) {
                 errorResponse(err, response);
                 return;
             }
-
             accountService.withdraw(accountId, data.amount, (account, err) => {
                 if (err) {
                     errorResponse(err, response);

@@ -12,7 +12,6 @@ mongodb.client((err, db) => {
     const collection = db.collection("bills");
     collection.drop();
     collection.insertMany(stored);
-    // collection.close();
 });
 
 function getBills(callback) {
@@ -24,11 +23,24 @@ function getBills(callback) {
     });
 }
 
-function saveBills(bills) {
+function saveBills(bills, callback) {
+    saveBill(bills[0], bills.slice(1), () => {
+        callback();
+    });
+}
+
+function saveBill(bill, bills, callback) {
     mongodb.client((err, db) => {
         const collection = db.collection("bills");
-        collection.updateMany(stored);
-        // collection.close();
+        collection.update({value: bill.value}, bill, {upsert: true}, (err) => {
+            if (bills.length > 1) {
+                saveBill(bills[0], bills.slice(1), () => {
+                    callback();
+                });
+            } else {
+                callback(err);
+            }
+        });
     });
 }
 
