@@ -46,9 +46,9 @@ describe("atm", () => {
             });
         });
 
-        const data = {
-            five_brl_bill: 3
-        };
+        const data = [
+            { value: 5, quantity: 3 }
+        ];
 
         req.write(JSON.stringify(data));
 
@@ -81,11 +81,11 @@ describe("atm", () => {
             });
         });
 
-        const data = {
-            fifty_brl_bill: 1,
-            ten_brl_bill: 2,
-            two_brl_bill: 3
-        };
+        const data = [
+            { value: 50, quantity: 1 },
+            { value: 10, quantity: 2 },
+            { value: 2, quantity: 3 }
+        ];
 
         req.write(JSON.stringify(data));
 
@@ -113,8 +113,8 @@ describe("atm", () => {
                 const result = JSON.parse(data);
 
                 assert.equal(result.account.balance, 30);
-                assert.equal(result.bills.fifty_brl_bill, 1);
-                assert.equal(result.bills.twenty_brl_bill, 1);
+                assert.equal(result.bills.filter((bill) => bill.value == 50)[0].quantity, 1);
+                assert.equal(result.bills.filter((bill) => bill.value == 20)[0].quantity, 1);
                 assert.ok(!result.bills.ten_brl_bill);
                 done();
             });
@@ -213,11 +213,11 @@ describe("atm", () => {
             });
         });
 
-        const data = {
-            fifty_brl_bill: 1,
-            ten_brl_bill: 2,
-            two_brl_bill: 3
-        };
+        const data = [
+            { value: 50, quantity: 1 },
+            { value: 10, quantity: 2 },
+            { value: 2, quantity: 3 }
+        ];
 
         req.write(JSON.stringify(data));
 

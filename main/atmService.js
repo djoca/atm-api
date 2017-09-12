@@ -1,21 +1,32 @@
 import * as repository from "./atmRepository";
 import { NotEnoughBillsAvailable } from "./exception";
 
-const bill_values = [2, 5, 10, 20, 50, 100];
+function getStoredBills() {
+    return JSON.parse(JSON.stringify(repository.getBills()));
+}
 
 function withdraw(amount, callback) {
     try {
         let rest = amount;
-        const bills = new Map();
-        const storedBills = new Map(repository.getBills());
+        let bills = [];
+        const storedBills = getStoredBills();
+        
+        storedBills.forEach((bill) => bills.push({ value: bill.value, quantity: 0 }));
 
         function selectBills(num, billValue) {
             if (num) {
-                const available = storedBills.has(billValue) ? storedBills.get(billValue) : 0;
-                const withdrawn = num < available ? num : available
-                const pocket = bills.has(billValue) ? bills.get(billValue) : 0;
-                bills.set(billValue, pocket + withdrawn);
-                storedBills.set(billValue, available - withdrawn);
+                let bill = repository.getBill(billValue);
+                const available = bill ? bill.quantity : 0;
+                const withdrawn = num < available ? num : available;
+
+                bills
+                    .filter((bill) => bill.value == billValue)
+                    .map((bill) => bill.quantity = bill.quantity + withdrawn);
+
+                storedBills
+                    .filter((bill) => bill.value == billValue)
+                    .map((bill) => bill.quantity = available - withdrawn);
+
                 rest -= billValue * withdrawn;
             }
         }
@@ -28,9 +39,9 @@ function withdraw(amount, callback) {
             selectBills(num, billValue);
         }
 
-        bill_values.reverse().forEach((billValue) => {
-            const num = Math.floor(rest / billValue);
-            selectBills(num, billValue);
+        storedBills.reverse().forEach((bill) => {
+            const num = Math.floor(rest / bill.value);
+            selectBills(num, bill.value);
         });
 
         if (rest) {
@@ -39,13 +50,22 @@ function withdraw(amount, callback) {
 
         repository.saveBills(storedBills);
 
-        callback({
-            fifty_brl_bill: bills.get(50),
-            twenty_brl_bill: bills.get(20)
-        });
+        callback(bills);
     } catch (err) {
         callback(null, err);
     }
 }
 
-export { withdraw };
+function deposit(bills, callback) {
+    const storedBills = getStoredBills();
+
+    bills.forEach((bill) => {
+        storedBills
+            .filter((b) => b.value == bill.value)
+            .map((b) => b.quantity += bill.quantity);
+    });
+
+    repository.saveBills(storedBills);
+}
+
+export { withdraw, deposit, getStoredBills };

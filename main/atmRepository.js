@@ -1,9 +1,10 @@
-let stored = new Map();
-stored.set(2, 10);
-stored.set(5, 1);
-stored.set(10, 5);
-stored.set(20, 5);
-stored.set(50, 5);
+let stored = [
+    { value: 2, quantity: 10 },
+    { value: 5, quantity: 1 },
+    { value: 10, quantity: 5 },
+    { value: 20, quantity: 5 },
+    { value: 50, quantity: 5 }
+];
 
 function getBills() {
     return stored;
@@ -13,4 +14,8 @@ function saveBills(bills) {
     stored = bills;
 }
 
-export { getBills, saveBills };
+function getBill(value) {
+    return stored.filter((v) => v.value == value)[0];
+}
+
+export { getBills, getBill, saveBills };

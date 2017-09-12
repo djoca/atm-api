@@ -1,25 +1,18 @@
 import * as repository from "./accountRepository";
+import * as atmService from "./atmService";
 import { AccountNotFoundError, InsuficientBalanceError } from "./exception";
 
-const bill_values = {
-    "one_brl_bill": 1,
-    "two_brl_bill": 2,
-    "five_brl_bill": 5,
-    "ten_brl_bill": 10,
-    "twenty_brl_bill": 20,
-    "fifty_brl_bill": 50,
-    "one_hundred_brl_bill": 100
-};
-
 function deposit(accountId, bills, callback) {
-    let value = 0;
-
-    for (let bill_type in bill_values) {
-        value += bills[bill_type] ? bills[bill_type] * bill_values[bill_type] : 0;
-    }
-
     try {
         const account = getAccount(accountId);
+
+        atmService.deposit(bills);
+
+        let value = 0;
+
+        bills.forEach((bill) => {
+            value += bill.value * bill.quantity;
+        });
 
         account.deposit(value);
 
