@@ -3,10 +3,6 @@ import { routing } from "./routing";
 import * as url from "url";
 import * as controller from "./controller";
 
-const defaultHeaders = {
-   "Content-type": "application/json; charser=utf-8"
-};
-
 class Server {
 
     constructor(serverPort) {
@@ -20,6 +16,10 @@ class Server {
         const route = routing.get(requestData.pathname, request.method);
 
         response.setHeader("Content-type", "application/json; charser=utf-8");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        response.setHeader("Access-Control-Allow-Origin", "*");
+
         if (route) {
             response.statusCode = 200;
             route.func(request, response, route);

@@ -45,20 +45,22 @@ function withdraw(request, response, route) {
 
         let result = {};
 
-        accountService.canWithdraw(accountId, data.amount, (err) => {
+        const amount = parseInt(data.amount);
+
+        accountService.canWithdraw(accountId, amount, (err) => {
             if (err) {
                 errorResponse(err, response);
                 return;
             }
-            accountService.withdraw(accountId, data.amount, (account, err) => {
+            accountService.withdraw(accountId, amount, (account, err) => {
                 if (err) {
                     errorResponse(err, response);
                     return;
                 }
 
-                atmService.withdraw(data.amount, (bills, err) => {
+                atmService.withdraw(amount, (bills, err) => {
                     if (err) {
-                        accountService.reversal(accountId, data.amount);
+                        accountService.reversal(accountId, amount);
                         errorResponse(err, response);
                         return;
                     }
@@ -66,7 +68,7 @@ function withdraw(request, response, route) {
                     response.statusCode = 200;
 
                     result.account = account;
-                    result.bills = bills;
+                    result.bills = bills.filter((bill) => bill.quantity);
 
                     response.write(JSON.stringify(result));
                     response.end();
@@ -88,6 +90,11 @@ function errorResponse(err, response) {
     }
 }
 
+function cors(err, response) {
+    response.statusCode = 200;
+    response.end();
+}
+
 routing.register({
     path: "/account/:id/deposit",
     method: "POST",
@@ -95,7 +102,19 @@ routing.register({
 });
 
 routing.register({
+    path: "/account/:id/deposit",
+    method: "OPTIONS",
+    func: cors
+});
+
+routing.register({
     path: "/account/:id/withdrawal",
     method: "POST",
     func: withdraw
+});
+
+routing.register({
+    path: "/account/:id/withdrawal",
+    method: "OPTIONS",
+    func: cors
 });
