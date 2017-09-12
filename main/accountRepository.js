@@ -15,7 +15,7 @@ function get(id, callback) {
         const collection = db.collection("accounts");
         collection.findOne({ _id: id }, {}, (err, row) => {
             if (row) {
-                callback(new Account(row._id, row.balance));
+                callback(new Account(row._id, row._balance));
             } else {
                 callback(null);
             }
